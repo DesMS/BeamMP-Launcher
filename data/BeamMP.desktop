@@ -1,0 +1,19 @@
+[Desktop Entry]
+Categories=Game;
+Comment[en_US]=Play this game on Steam
+Comment=Play this game on Steam
+Exec=SETUPINSTALLLOCATION/BeamMP-Launcher
+GenericName[en_US]=
+GenericName=
+Icon=SETUPINSTALLLOCATION/BeamMP.ico
+MimeType=
+Name[en_US]=BeamMP
+Name=BeamMP
+Path=SETUPINSTALLLOCATION
+Path=
+StartupNotify=true
+Terminal=true
+TerminalOptions=
+Type=Application
+X-KDE-SubstituteUID=false
+X-KDE-Username=
