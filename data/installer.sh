@@ -90,7 +90,7 @@ if [ -n "$WHIPTAILF" ]; then
         echo -e "$MENU1\n\n$OPTION21\n"
         read -p "[$YESBUTTON/$NOBUTTON]> " RESPONSE
         case "${RESPONSE,,}" in
-            "${YESBUTTON,,}" ) clear; echo -e "$MENU1\n\n$OPTION22\n"; read -e -i "$HOME/Desktop" -p "> " STARTMENUSHORT; break;;
+            "${YESBUTTON,,}" ) clear; echo -e "$MENU1\n\n$OPTION22\n"; read -e -i "$HOME/Desktop" -p "> " DESKTOPSHORT; break;;
             "${NOBUTTON,,}" ) break;;
             * ) echo;;
         esac
@@ -100,7 +100,7 @@ if [ -n "$WHIPTAILF" ]; then
         echo -e "$MENU1\n\n$OPTION31\n"
         read -p "[$YESBUTTON/$NOBUTTON]> " RESPONSE
         case "${RESPONSE,,}" in
-            "${YESBUTTON,,}" ) clear; echo -e "$MENU1\n\n$OPTION32\n"; read -e -i "$HOME/.local/bin" -p "> " STARTMENUSHORT; break;;
+            "${YESBUTTON,,}" ) clear; echo -e "$MENU1\n\n$OPTION32\n"; read -e -i "$HOME/.local/bin" -p "> " BINSHORT; break;;
             "${NOBUTTON,,}" ) break;;
             * ) echo;;
         esac
@@ -278,31 +278,31 @@ if [ -n "$WHIPTAILF" ]; then
     rm -f $INSTALLLOC/BeamMP-Launcher &>/dev/null
     rm -f $INSTALLLOC/BeamMP.ico &>/dev/null
     touch $INSTALLLOC/BeamMP-Launcher
-    tail +FILELINELENGTH0 "$0" | head -n OUTFILELINELENGTH0 > $INSTALLLOC/BeamMP-Launcher
+    cat "$0" | tail -n +FILELINELENGTH0 | head -n OUTFILELINELENGTH0 > $INSTALLLOC/BeamMP-Launcher
     chmod +x $INSTALLLOC/BeamMP-Launcher &>/dev/null
     touch $INSTALLLOC/BeamMP.ico
-    tail +FILELINELENGTH1 "$0" | head -n OUTFILELINELENGTH1 > $INSTALLLOC/BeamMP.ico
-    chmod +x $INSTALLLOC/BeamMP.ico &>/dev/null
+    cat "$0" | tail -n +FILELINELENGTH1 | head -n OUTFILELINELENGTH1 > $INSTALLLOC/BeamMP.ico
     touch $INSTALLLOC/BeamMP.desktop
-    tail +FILELINELENGTH2 "$0" | head -n OUTFILELINELENGTH2 > $INSTALLLOC/BeamMP.desktop
-    chmod +x $INSTALLLOC/BeamMP.desktop &>/dev/null
+    cat "$0" | tail -n +FILELINELENGTH2 | head -n OUTFILELINELENGTH2 > $INSTALLLOC/BeamMP.desktop
     sed -i "s/SETUPINSTALLLOCATION/$(echo "$INSTALLLOC" | sed "s/\\//\\\\\\//g")/g" $INSTALLLOC/BeamMP.desktop
     if [ -n "$BINSHORT" ]; then
         rm $BINSHORT/BeamMP-Launcher &>/dev/null
-        ln -s $INSTALLLOC/BeamMP-Launcher $BINSHORT/BeamMP-Launcher
-        chmod u+x $BINSHORT/BeamMP-Launcher
+        cp $INSTALLLOC/BeamMP-Launcher $BINSHORT/BeamMP-Launcher
+        chmod +x $BINSHORT/BeamMP-Launcher
     fi
     if [ -n "$DESKTOPSHORT" ]; then
         rm $DESKTOPSHORT/BeamMP.desktop &>/dev/null
-        ln -s $INSTALLLOC/BeamMP.desktop $DESKTOPSHORT/BeamMP.desktop
+        cp $INSTALLLOC/BeamMP.desktop $DESKTOPSHORT/BeamMP.desktop
     fi
     if [ -n "$STARTMENUSHORT" ]; then
         rm $STARTMENUSHORT/BeamMP.desktop &>/dev/null
-        ln -s $INSTALLLOC/BeamMP.desktop $STARTMENUSHORT/BeamMP.desktop
+        cp $INSTALLLOC/BeamMP.desktop $STARTMENUSHORT/BeamMP.desktop
         if command -v update-desktop-database &>/dev/null; then
             update-desktop-database $STARTMENUSHORT
         fi
     fi
+    echo "Finished installing BeamMP, please check for errors"
+    sleep 30
 else
     {
         echo 0
@@ -315,30 +315,28 @@ else
         rm -f $INSTALLLOC/BeamMP.ico &>/dev/null
         echo 5
         touch $INSTALLLOC/BeamMP-Launcher
-        tail +FILELINELENGTH0 "$0" | head -n OUTFILELINELENGTH0 > $INSTALLLOC/BeamMP-Launcher
+        cat "$0" | tail -n +FILELINELENGTH0 | head -n OUTFILELINELENGTH0 > $INSTALLLOC/BeamMP-Launcher
         chmod +x $INSTALLLOC/BeamMP-Launcher &>/dev/null
         echo 35
         touch $INSTALLLOC/BeamMP.ico
-        tail +FILELINELENGTH1 "$0" | head -n OUTFILELINELENGTH1 > $INSTALLLOC/BeamMP.ico
-        chmod +x $INSTALLLOC/BeamMP.ico &>/dev/null
+        cat "$0" | tail -n +FILELINELENGTH1 | head -n OUTFILELINELENGTH1 > $INSTALLLOC/BeamMP.ico
         echo 65
         touch $INSTALLLOC/BeamMP.desktop
-        tail +FILELINELENGTH2 "$0" | head -n OUTFILELINELENGTH2 > $INSTALLLOC/BeamMP.desktop
-        chmod +x $INSTALLLOC/BeamMP.desktop &>/dev/null
+        cat "$0" | tail -n +FILELINELENGTH2 | head -n OUTFILELINELENGTH2 > $INSTALLLOC/BeamMP.desktop
         sed -i "s/SETUPINSTALLLOCATION/$(echo "$INSTALLLOC" | sed "s/\\//\\\\\\//g")/g" $INSTALLLOC/BeamMP.desktop
         echo 95
         if [ -n "$BINSHORT" ]; then
             rm $BINSHORT/BeamMP-Launcher &>/dev/null
-            ln -s $INSTALLLOC/BeamMP-Launcher $BINSHORT/BeamMP-Launcher
-            chmod u+x $BINSHORT/BeamMP-Launcher
+            cp $INSTALLLOC/BeamMP-Launcher $BINSHORT/BeamMP-Launcher
+            chmod +x $BINSHORT/BeamMP-Launcher
         fi
         if [ -n "$DESKTOPSHORT" ]; then
             rm $DESKTOPSHORT/BeamMP.desktop &>/dev/null
-            ln -s $INSTALLLOC/BeamMP.desktop $DESKTOPSHORT/BeamMP.desktop
+            cp $INSTALLLOC/BeamMP.desktop $DESKTOPSHORT/BeamMP.desktop
         fi
         if [ -n "$STARTMENUSHORT" ]; then
             rm $STARTMENUSHORT/BeamMP.desktop &>/dev/null
-            ln -s $INSTALLLOC/BeamMP.desktop $STARTMENUSHORT/BeamMP.desktop
+            cp $INSTALLLOC/BeamMP.desktop $STARTMENUSHORT/BeamMP.desktop
             if command -v update-desktop-database >/dev/null; then
                 update-desktop-database $STARTMENUSHORT
             fi
