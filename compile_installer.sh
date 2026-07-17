@@ -1,5 +1,5 @@
 #!/bin/bash
-cp ./bin/BeamMP-Installer ./data
+cp ./bin/BeamMP-Launcher ./data
 cd data
 cp installer.sh ./BeamMP-Installer
 echo -e "\nexit" >> ./BeamMP-Installer
