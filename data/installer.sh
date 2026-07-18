@@ -1,9 +1,9 @@
 #!/bin/bash
 
 if command -v whiptail &>/dev/null; then
-    export WHIPTAILF=""
+    WHIPTAILF=""
 else
-    export WHIPTAILF="true"
+    WHIPTAILF="true"
     clear
 fi
 
@@ -17,36 +17,36 @@ if [ -n "$WHIPTAILF" ]; then
         esac
     done
 else
-    export LANG=$(whiptail --title "BeamMP Installer" --nocancel --notags --menu "Select the language to use during the installation." 0 0 0 "1" "English" 3>&1 1>&2 2>&3)
+    LANG=$(whiptail --title "BeamMP Installer" --nocancel --notags --menu "Select the language to use during the installation." 0 0 0 "1" "English" 3>&1 1>&2 2>&3)
 fi
 
 if [[ "$LANG" == "1" ]]; then
-    export TITLE="BeamMP Installer"
-    export CHECKING="Checking"
-    export CONTINUEBUTTON="Continue"
-    export ACCEPTBUTTON="Accept"
-    export REJECTBUTTON="Reject"
-    export YESBUTTON="Yes"
-    export NOBUTTON="No"
-    export CANCELBUTTON="Cancel"
-    export MENU0="Please read the following License Agreement. You must accept the terms of this agreement before continuing with the installation.\n\nCopyright (C) 2026 BeamMP Ltd., BeamMP team and contributors.\nThis program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.\nThis program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.\nYou should have received a copy of the GNU Affero General Public License along with this program. If not, see https://www.gnu.org/licenses/agpl-3.0.html."
-    export REJECT0="Goodbye!"
-    export MENU1="What additional tasks should be performed?"
-    export OPTION11="Create a start menu shortcut"
-    export OPTION12="Please choose a .desktop location for your start menu."
-    export OPTION21="Create a desktop shortcut"
-    export OPTION22="Please choose a .desktop location for your desktop."
-    export OPTION31="Create a local bin link"
-    export OPTION32="Please choose a bin location."
-    export OPTION41="Where should BeamMP be installed?"
-    export OPTION51="Run BeamMP Launcher"
-    export MENU2="Unfortunately, your distribution is not supported\nWe can still install a binary.\nIf your system is based on gcc, then there is a 99% chance this package will work.\nHowever, we cannot guarantee it will work if you choose to install."
-    export MENU3="Checking for packages"
-    export MENU41="It appears you do not have libraries:\n\n"
-    export MENU42="\n\nIf you would like to continue, please select continue.\nHowever, we cannot guarantee that BeamMP will work."
-    export MENU5="Installing BeamMP"
-    export MENU6="Successfully installed BeamMP! Setup is finished."
-    export MENU7="Last chance, would you like to continue with the BeamMP installation?"
+    TITLE="BeamMP Installer"
+    CHECKING="Checking"
+    CONTINUEBUTTON="Continue"
+    ACCEPTBUTTON="Accept"
+    REJECTBUTTON="Reject"
+    YESBUTTON="Yes"
+    NOBUTTON="No"
+    CANCELBUTTON="Cancel"
+    MENU0="Please read the following License Agreement. You must accept the terms of this agreement before continuing with the installation.\n\nCopyright (C) 2026 BeamMP Ltd., BeamMP team and contributors.\nThis program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.\nThis program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.\nYou should have received a copy of the GNU Affero General Public License along with this program. If not, see https://www.gnu.org/licenses/agpl-3.0.html."
+    REJECT0="Goodbye!"
+    MENU1="What additional tasks should be performed?"
+    OPTION11="Create a start menu shortcut"
+    OPTION12="Please choose a .desktop location for your start menu."
+    OPTION21="Create a desktop shortcut"
+    OPTION22="Please choose a .desktop location for your desktop."
+    OPTION31="Create a local bin link"
+    OPTION32="Please choose a bin location."
+    OPTION41="Where should BeamMP be installed?"
+    OPTION51="Run BeamMP Launcher"
+    MENU2="Unfortunately, your distribution is not supported\nWe can still install a binary.\nIf your system is based on gcc, then there is a 99% chance this package will work.\nHowever, we cannot guarantee it will work if you choose to install."
+    MENU3="Checking for packages"
+    MENU41="It appears you do not have libraries:\n\n"
+    MENU42="\n\nIf you would like to continue, please select continue.\nHowever, we cannot guarantee that BeamMP will work."
+    MENU5="Installing BeamMP"
+    MENU6="Successfully installed BeamMP! Setup is finished."
+    MENU7="Last chance, would you like to continue with the BeamMP installation?"
 else
     echo "0x1 Unsupported Language"
     exit 1
@@ -71,9 +71,9 @@ else
     fi
 fi
 
-export STARTMENUSHORT=""
-export DESKTOPSHORT=""
-export BINSHORT=""
+STARTMENUSHORT=""
+DESKTOPSHORT=""
+BINSHORT=""
 if [ -n "$WHIPTAILF" ]; then
     while true; do
         clear
@@ -109,13 +109,13 @@ else
     eval EXTRAS=($(whiptail --nocancel --notags --title "$TITLE" --checklist "$MENU1" 0 0 0 "1" "$OPTION11" ON "2" "$OPTION21" OFF "3" "$OPTION31" ON 3>&1 1>&2 2>&3))
     for EXTRA in "${EXTRAS[@]}"; do
         if [[ "$EXTRA" == "1" ]]; then
-            export STARTMENUSHORT=$(whiptail --nocancel --title "$TITLE" --inputbox "$OPTION12" 0 0 "$HOME/.local/share/applications" 3>&1 1>&2 2>&3)
+            STARTMENUSHORT=$(whiptail --nocancel --title "$TITLE" --inputbox "$OPTION12" 0 0 "$HOME/.local/share/applications" 3>&1 1>&2 2>&3)
         fi
         if [[ "$EXTRA" == "2" ]]; then
-            export DESKTOPSHORT=$(whiptail --nocancel --title "$TITLE" --inputbox "$OPTION22" 0 0 "$HOME/Desktop" 3>&1 1>&2 2>&3)
+            DESKTOPSHORT=$(whiptail --nocancel --title "$TITLE" --inputbox "$OPTION22" 0 0 "$HOME/Desktop" 3>&1 1>&2 2>&3)
         fi
         if [[ "$EXTRA" == "3" ]]; then
-            export BINSHORT=$(whiptail --nocancel --title "$TITLE" --inputbox "$OPTION32" 0 0 "$HOME/.local/bin" 3>&1 1>&2 2>&3)
+            BINSHORT=$(whiptail --nocancel --title "$TITLE" --inputbox "$OPTION32" 0 0 "$HOME/.local/bin" 3>&1 1>&2 2>&3)
         fi
     done
 fi
@@ -135,7 +135,7 @@ if [ -n "$WHIPTAILF" ]; then
         esac
     done
 else
-    export INSTALLLOC=$(whiptail --nocancel --title "$TITLE" --inputbox "$OPTION41" 0 0 "$HOME/.local/share/BeamMP" 3>&1 1>&2 2>&3)
+    INSTALLLOC=$(whiptail --nocancel --title "$TITLE" --inputbox "$OPTION41" 0 0 "$HOME/.local/share/BeamMP" 3>&1 1>&2 2>&3)
 
     whiptail --title "$TITLE" --yes-button "$CONTINUEBUTTON" --no-button "$CANCELBUTTON" --yesno "$MENU7" 0 0
     if [[ "$?" == "1" ]]; then
@@ -174,7 +174,7 @@ else
     fi
 fi
 
-export ECHOCOMMAND="true"
+ECHOCOMMAND="true"
 
 DOECHO() {
     if [ -n "$ECHOCOMMAND" ]; then
@@ -234,7 +234,7 @@ PERFORM_SETUP() {
 if [ -n "$WHIPTAILF" ]; then
     clear
     echo "$MENU5..."
-    export echocommand=""
+    echocommand=""
     PERFORM_SETUP
     echo "Finished installing BeamMP"
 else
