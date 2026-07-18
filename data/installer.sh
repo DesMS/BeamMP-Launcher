@@ -42,7 +42,7 @@ if [[ "$LANG" == "1" ]]; then
     export OPTION51="Run BeamMP Launcher"
     export MENU2="Unfortunately, your distribution is not supported\nWe can still install a binary.\nIf your system is based on gcc, then there is a 99% chance this package will work.\nHowever, we cannot guarantee it will work if you choose to install."
     export MENU3="Checking for packages"
-    export MENU41="For security purposes, we cannot install packages for you.\nIt appears you do not have packages:\n\n"
+    export MENU41="It appears you do not have libraries:\n\n"
     export MENU42="\n\nIf you would like to continue, please select continue.\nHowever, we cannot guarantee that BeamMP will work."
     export MENU5="Installing BeamMP"
     export MENU6="Successfully installed BeamMP! Setup is finished."
@@ -144,132 +144,55 @@ else
     fi
 fi
 
-export PACKAGEREQUEST=""
-if command -v apt &>/dev/null; then
-    # libc6, libgcc-s1, libstdc++6
-    if [ -n "$WHIPTAILF" ]; then
-        clear
-        echo "$CHECKING \"libc6\"..."
-        if [[ "$(dpkg-query -W --showformat='${Status}\n' "libc6" | grep "install ok installed")" == "" ]]; then
-            export PACKAGEREQUEST="libc6 $PACKAGEREQUEST"
-        fi
-        clear
-        echo "$CHECKING \"libgcc-s1\"..."
-        if [[ "$(dpkg-query -W --showformat='${Status}\n' "libgcc-s1" | grep "install ok installed")" == "" ]]; then
-            export PACKAGEREQUEST="libgcc-s1 $PACKAGEREQUEST"
-        fi
-        clear
-        echo "$CHECKING \"libstdc++6\"..."
-        if [[ "$(dpkg-query -W --showformat='${Status}\n' "libstdc++6" | grep "install ok installed")" == "" ]]; then
-            export PACKAGEREQUEST="libstdc++6 $PACKAGEREQUEST"
-        fi
-    else
-        {
-            echo "0"
-            if [[ "$(dpkg-query -W --showformat='${Status}\n' "libc6" | grep "install ok installed")" == "" ]]; then
-                export PACKAGEREQUEST="libc6 $PACKAGEREQUEST"
+# libc.so.6, libgcc_s.so.1, libm.so.6, libstdc++.so.6, 
+
+if command -v ldconfig > /dev/null; then
+SETUPLIBREQUEST
+    if [ -n "$LIBREQUEST" ]; then
+        if [ -n "$WHIPTAILF" ]; then
+            clear
+            echo -e "$MENU41 $LIBREQUEST $MENU42\n"
+            read -p "[$CONTINUEBUTTON/$CANCELBUTTON]> " RESPONSE
+            case "${RESPONSE,,}" in
+                "${CONTINUEBUTTON,,}" ) break;;
+                "${CANCELBUTTON,,}" ) clear; echo "0x2 Potentially Unsupported"; exit 2;;
+                * ) clear;;
+            esac
+        else
+            whiptail --title "$TITLE" --defaultno --yes-button "$CONTINUEBUTTON" --no-button "$CANCELBUTTON" --yesno "$MENU41 $LIBREQUEST $MENU42" 0 0
+            if [[ "$?" == "1" ]]; then
+                echo "0x2 Potentially Unsupported"
+                exit 2
             fi
-            echo "33"
-            if [[ "$(dpkg-query -W --showformat='${Status}\n' "libgcc-s1" | grep "install ok installed")" == "" ]]; then
-                export PACKAGEREQUEST="libgcc-s1 $PACKAGEREQUEST"
-            fi
-            echo "66"
-            if [[ "$(dpkg-query -W --showformat='${Status}\n' "libstdc++6" | grep "install ok installed")" == "" ]]; then
-                export PACKAGEREQUEST="libstdc++6 $PACKAGEREQUEST"
-            fi
-            echo "100"
-        } | whiptail --title "$TITLE" --gauge "$MENU3..." 0 0 0
-    fi
-elif command -v dnf &>/dev/null; then
-    # glibc, libstdc++, libgcc
-    if [ -n "$WHIPTAILF" ]; then
-        clear
-        echo "$CHECKING \"glibc\"..."
-        if ! dnf list --installed "glibc" &>/dev/null; then
-            export PACKAGEREQUEST="glibc $PACKAGEREQUEST"
         fi
-        clear
-        echo "$CHECKING \"libstdc++\"..."
-        if ! dnf list --installed "libstdc++" &>/dev/null; then
-            export PACKAGEREQUEST="libstdc++ $PACKAGEREQUEST"
-        fi
-        clear
-        echo "$CHECKING \"libgcc\"..."
-        if ! dnf list --installed "libgcc" &>/dev/null; then
-            export PACKAGEREQUEST="libgcc $PACKAGEREQUEST"
-        fi
-    else
-        {
-            echo "0"
-            if ! dnf list --installed "glibc" &>/dev/null; then
-                export PACKAGEREQUEST="glibc $PACKAGEREQUEST"
-            fi
-            echo "33"
-            if ! dnf list --installed "libstdc++" &>/dev/null; then
-                export PACKAGEREQUEST="libstdc++ $PACKAGEREQUEST"
-            fi
-            echo "66"
-            if ! dnf list --installed "libgcc" &>/dev/null; then
-                export PACKAGEREQUEST="libgcc $PACKAGEREQUEST"
-            fi
-            echo "100"
-        } | whiptail --title "$TITLE" --gauge "$MENU3..." 0 0 0
-    fi
-elif command -v pacman &>/dev/null; then
-    if [ -n "$WHIPTAILF" ]; then
-        clear
-        echo "$CHECKING \"gcc-libs\"..."
-        if ! pacman -Qs "gcc-libs" > /dev/null ; then
-            export PACKAGEREQUEST="gcc-libs $PACKAGEREQUEST"
-        fi
-        clear
-        echo "$CHECKING \"glibc\"..."
-        if ! pacman -Qs "glibc" > /dev/null ; then
-            export PACKAGEREQUEST="glibc $PACKAGEREQUEST"
-        fi
-    else
-        {
-            echo "0"
-            if ! pacman -Qs "gcc-libs" > /dev/null ; then
-                export PACKAGEREQUEST="gcc-libs $PACKAGEREQUEST"
-            fi
-            echo "50"
-            if ! pacman -Qs "glibc" > /dev/null ; then
-                export PACKAGEREQUEST="glibc $PACKAGEREQUEST"
-            fi
-            echo "100"
-        } | whiptail --title "$TITLE" --gauge "$MENU3..." 0 0 0
     fi
 else
     whiptail --title "$TITLE" --defaultno --yes-button "$CONTINUEBUTTON" --no-button "$CANCELBUTTON" --yesno "$MENU2" 0 0
     if [[ "$?" == "1" ]]; then
-        echo "0x2 Unsupported Language"
+        echo "0x2 Potentially Unsupported"
         exit 2
     fi
 fi
 
-if [ -n "$PACKAGEREQUEST" ]; then
-    if [ -n "$WHIPTAILF" ]; then
-        clear
-        echo -e "$MENU41 $PACKAGEREQUEST $MENU42\n"
-        read -p "[$CONTINUEBUTTON/$CANCELBUTTON]> " RESPONSE
-        case "${RESPONSE,,}" in
-            "${CONTINUEBUTTON,,}" ) break;;
-            "${CANCELBUTTON,,}" ) clear; echo "$REJECT0"; exit 0;;
-            * ) clear;;
-        esac
-    else
-        whiptail --title "$TITLE" --defaultno --yes-button "$CONTINUEBUTTON" --no-button "$CANCELBUTTON" --yesno "$MENU41 $PACKAGEREQUEST $MENU42" 0 0
-        if [[ "$?" == "1" ]]; then
-            echo "$REJECT0"
-            exit 0
-        fi
-    fi
-fi
+export ECHOCOMMAND="true"
 
-if [ -n "$WHIPTAILF" ]; then
-    clear
-    echo "$MENU5..."
+DOECHO() {
+    if [ -n "$ECHOCOMMAND" ]; then
+        echo $@
+    fi
+}
+
+DOLINK() {
+    ln -s $1 $2 &>/dev/null
+    if [[ ! -L "$2" || ! -e "$2" ]]; then
+        rm $2 &>/dev/null
+        rm -f $2 &>/dev/null
+        cp $1 $2 # Backup incase symlinking is broken (Dependent on your filesystem type)
+    fi
+}
+
+PERFORM_SETUP() {
+    DOECHO 0
     mkdir -p $INSTALLLOC &>/dev/null
     if [ ! -d "$INSTALLLOC" ]; then
         echo "0x5 Invalid Install Directory"
@@ -277,71 +200,46 @@ if [ -n "$WHIPTAILF" ]; then
     fi
     rm -f $INSTALLLOC/BeamMP-Launcher &>/dev/null
     rm -f $INSTALLLOC/BeamMP.ico &>/dev/null
+    DOECHO 5
     touch $INSTALLLOC/BeamMP-Launcher
     cat "$0" | tail -n +FILELINELENGTH0 | head -n OUTFILELINELENGTH0 > $INSTALLLOC/BeamMP-Launcher
     chmod +x $INSTALLLOC/BeamMP-Launcher &>/dev/null
+    DOECHO 35
     touch $INSTALLLOC/BeamMP.ico
     cat "$0" | tail -n +FILELINELENGTH1 | head -n OUTFILELINELENGTH1 > $INSTALLLOC/BeamMP.ico
+    DOECHO 65
     touch $INSTALLLOC/BeamMP.desktop
     cat "$0" | tail -n +FILELINELENGTH2 | head -n OUTFILELINELENGTH2 > $INSTALLLOC/BeamMP.desktop
     sed -i "s/SETUPINSTALLLOCATION/$(echo "$INSTALLLOC" | sed "s/\\//\\\\\\//g")/g" $INSTALLLOC/BeamMP.desktop
+    DOECHO 95
     if [ -n "$BINSHORT" ]; then
         rm $BINSHORT/BeamMP-Launcher &>/dev/null
-        cp $INSTALLLOC/BeamMP-Launcher $BINSHORT/BeamMP-Launcher
+        DOLINK $INSTALLLOC/BeamMP-Launcher $BINSHORT/BeamMP-Launcher
         chmod +x $BINSHORT/BeamMP-Launcher
     fi
     if [ -n "$DESKTOPSHORT" ]; then
         rm $DESKTOPSHORT/BeamMP.desktop &>/dev/null
-        cp $INSTALLLOC/BeamMP.desktop $DESKTOPSHORT/BeamMP.desktop
+        cp $INSTALLLOC/BeamMP.desktop $DESKTOPSHORT/BeamMP.desktop # Common practice to cp, not link
     fi
     if [ -n "$STARTMENUSHORT" ]; then
         rm $STARTMENUSHORT/BeamMP.desktop &>/dev/null
-        cp $INSTALLLOC/BeamMP.desktop $STARTMENUSHORT/BeamMP.desktop
-        if command -v update-desktop-database &>/dev/null; then
+        DOLINK $INSTALLLOC/BeamMP.desktop $STARTMENUSHORT/BeamMP.desktop
+        if command -v update-desktop-database >/dev/null; then
             update-desktop-database $STARTMENUSHORT
         fi
     fi
-    echo "Finished installing BeamMP, please check for errors"
-    sleep 30
+    DOECHO 100
+}
+
+if [ -n "$WHIPTAILF" ]; then
+    clear
+    echo "$MENU5..."
+    export echocommand=""
+    PERFORM_SETUP
+    echo "Finished installing BeamMP"
 else
     {
-        echo 0
-        mkdir -p $INSTALLLOC &>/dev/null
-        if [ ! -d "$INSTALLLOC" ]; then
-            echo "0x5 Invalid Install Directory"
-            exit 5
-        fi
-        rm -f $INSTALLLOC/BeamMP-Launcher &>/dev/null
-        rm -f $INSTALLLOC/BeamMP.ico &>/dev/null
-        echo 5
-        touch $INSTALLLOC/BeamMP-Launcher
-        cat "$0" | tail -n +FILELINELENGTH0 | head -n OUTFILELINELENGTH0 > $INSTALLLOC/BeamMP-Launcher
-        chmod +x $INSTALLLOC/BeamMP-Launcher &>/dev/null
-        echo 35
-        touch $INSTALLLOC/BeamMP.ico
-        cat "$0" | tail -n +FILELINELENGTH1 | head -n OUTFILELINELENGTH1 > $INSTALLLOC/BeamMP.ico
-        echo 65
-        touch $INSTALLLOC/BeamMP.desktop
-        cat "$0" | tail -n +FILELINELENGTH2 | head -n OUTFILELINELENGTH2 > $INSTALLLOC/BeamMP.desktop
-        sed -i "s/SETUPINSTALLLOCATION/$(echo "$INSTALLLOC" | sed "s/\\//\\\\\\//g")/g" $INSTALLLOC/BeamMP.desktop
-        echo 95
-        if [ -n "$BINSHORT" ]; then
-            rm $BINSHORT/BeamMP-Launcher &>/dev/null
-            cp $INSTALLLOC/BeamMP-Launcher $BINSHORT/BeamMP-Launcher
-            chmod +x $BINSHORT/BeamMP-Launcher
-        fi
-        if [ -n "$DESKTOPSHORT" ]; then
-            rm $DESKTOPSHORT/BeamMP.desktop &>/dev/null
-            cp $INSTALLLOC/BeamMP.desktop $DESKTOPSHORT/BeamMP.desktop
-        fi
-        if [ -n "$STARTMENUSHORT" ]; then
-            rm $STARTMENUSHORT/BeamMP.desktop &>/dev/null
-            cp $INSTALLLOC/BeamMP.desktop $STARTMENUSHORT/BeamMP.desktop
-            if command -v update-desktop-database >/dev/null; then
-                update-desktop-database $STARTMENUSHORT
-            fi
-        fi
-        echo 100
+        PERFORM_SETUP
     } | whiptail --title "$TITLE" --gauge "$MENU5..." 0 0 0
 fi
 
