@@ -1,7 +1,8 @@
 [Desktop Entry]
 Categories=Game;
-Comment[en_US]=Play this game on Steam
-Comment=Play this game on Steam
+PrefersNonDefaultGPU=false
+Comment[en_US]=Multiplayer for BeamNG.Drive
+Comment=Multiplayer for BeamNG.Drive
 Exec=SETUPINSTALLLOCATION/BeamMP-Launcher
 GenericName[en_US]=
 GenericName=
@@ -17,3 +18,6 @@ TerminalOptions=
 Type=Application
 X-KDE-SubstituteUID=false
 X-KDE-Username=
+X-KDE-StartupNotify=false
+X-GNOME-AutoRestart=false
+X-GNOME-Autostart-enabled=false
