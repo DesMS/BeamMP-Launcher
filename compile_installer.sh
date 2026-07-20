@@ -23,6 +23,28 @@ else
     sed -i "s/SETUPLIBREQUEST/LIBREQUEST=\"\"/g" ./BeamMP_Installer.sh
 fi
 
+# Languages
+echo "Generating locales"
+NL=$'\n'
+LANGS=""
+LANGSEXEC="if [[ \"\$LANG\" == \"1\" ]]; then"
+NUMLANG=1
+for FILE in ./locales/*; do
+    DAT="$(cat "$FILE" | sed 's/^[[:space:]]*//g' | sed '/^[[:blank:]]*#/d;s/#.*//' | sed '/^[[:blank:]]*$/d')"
+    OUT="$(echo "$DAT" | tail -n +2)"
+    LANGNAME="$(echo "$DAT" | head -n +1)"
+    LANGS="$LANGS \"$NUMLANG\" \"$LANGNAME\""
+    if ((NUMLANG > 1)); then
+        LANGSEXEC="$LANGSEXEC${NL}elif [[ \"\$LANG\" == \"$NUMLANG\" ]]; then"
+    fi
+    LANGSEXEC="$LANGSEXEC${NL}$OUT"
+    NUMLANG=$((NUMLANG+1))
+done
+LANGSEXEC="$(echo "$LANGSEXEC${NL}else${NL}echo \"0x1 Unsupported Language\"${NL}exit 1${NL}fi" | sed "s/\\\\/\\\\\\\\/g" | sed "s/\\//\\\\\\//g" | sed "s/\\\$LANG/\\\\\\\$LANG/g")"
+
+perl -i -pe "s/SETUPLANGS0/$LANGS/" ./BeamMP_Installer.sh
+perl -i -pe "s/SETUPLANGS1/$LANGSEXEC/" ./BeamMP_Installer.sh
+
 # Minify
 echo "Cleaning up file"
 sed -i '/^[[:blank:]]*#/d;s/#.*//' ./BeamMP_Installer.sh # Remove comments
@@ -53,5 +75,7 @@ cat "./BeamMP.desktop" >> ./BeamMP_Installer.sh
 # Finish up
 echo "Finishing up"
 chmod u+x ./BeamMP_Installer.sh
+mkdir ../bin &>/dev/null
+mv ./BeamMP_Installer.sh ../bin
 mkdir ../bin &>/dev/null
 mv ./BeamMP_Installer.sh ../bin
